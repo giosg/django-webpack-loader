@@ -92,6 +92,8 @@ WEBPACK_LOADER = {
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
         'LOADER_CLASS': 'webpack_loader.loader.WebpackLoader',
+        'EXCLUDE_RUNTIME': False,
+        'BASE_ENTRYPOINT': ''
     }
 }
 ```
@@ -127,7 +129,7 @@ If the bundle generates a file called `main-cf4b5fab6e00a404e0c7.js` and your ST
 <script type="text/javascript" src="/static/output/bundles/main-cf4b5fab6e00a404e0c7.js"/>
 ```
 
-**NOTE:** If your webpack config outputs the bundles at the root of your `staticfiles` dir, then `BUNDLE_DIR_NAME` should be an empty string `''`, not `'/'`. 
+**NOTE:** If your webpack config outputs the bundles at the root of your `staticfiles` dir, then `BUNDLE_DIR_NAME` should be an empty string `''`, not `'/'`.
 
 <br>
 
@@ -169,6 +171,7 @@ and your webpack config is located at `/home/src/webpack.config.js`, then the va
 
 <br>
 
+
 #### LOADER_CLASS
 
 `LOADER_CLASS` is the fully qualified name of a python class as a string that holds the custom webpack loader.
@@ -202,6 +205,19 @@ WEBPACK_LOADER = {
 }
 ```
 
+#### EXCLUDE_RUNTIME
+
+`EXCLUDE_RUNTIME` is meant to be used with `render_entrypoint`. When creating multi-page applications, it's common to want to
+split a single runtime file that is used by all chunks. You can do that by using `{% render_bundle 'runtime' %}` in your base HTML file and setting `EXCLUDE_RUNTIME` to `True` in order to not include it again when using `{% render_entrypoint 'example_entry_point' %}`
+
+<br>
+
+#### BASE_ENTRYPOINT
+
+`BASE_ENTRYPOINT` is meant to be used with `render_entrypoint`. When creating multi-page applications, it's common to want to
+include common js in the base HTML. If the main entrypoint's name is `main`, you can do that by including `{% render_entrypoint 'main' %}` in your base HTML file. Now in another entrypoints (that extend the base HTML file), there might be some chunks that were already included in `main`, that means they would be included twice in the final rendered HTML, to avoid that, set `BASE_ENTRYPOINT` to `'main'`, then any duplicate chunks between an entrypoint and the main entrypoint would be included only once.
+
+
 <br>
 
 ## Usage
@@ -225,6 +241,8 @@ INSTALLED_APPS = (
 
 ### Templates
 
+#### render_bundle
+
 ```HTML+Django
 {% load render_bundle from webpack_loader %}
 
@@ -245,6 +263,46 @@ INSTALLED_APPS = (
   <body>
     ....
     {% render_bundle 'main' 'js' %}
+  </body>
+</head>
+```
+
+#### render_entrypoint (Available only when using Webpack v.4 or newer)
+
+```HTML+Django
+{% load render_entrypoint from webpack_loader %}
+
+{% render_entrypoint 'index' %}
+```
+
+`render_entrypoint` will render all the proper `<script>` and `<link>` tags needed in your template for that endpoint.
+Using this, you can make use of webpack 4 code splitting features.
+Example webpack config:
+```javascript
+module.exports = {
+  ...,
+  entry: {
+    index: "./myapp/static/src/pages/index.js",
+    contact_us: "./myapp/static/src/pages/contact_us.js",
+  },
+  ...,
+  plugins: [new BundleTracker({ filename: "./webpack-stats.json" })]
+};
+
+```
+
+Just as `render_bundle`, `render_entrypoint` also takes a second argument which can be a file extension to match, and can be used in a similar way,
+
+```HTML+Django
+{% load render_entrypoint from webpack_loader %}
+
+<html>
+  <head>
+    {% render_entrypoint 'main' 'css' %}
+  </head>
+  <body>
+    ....
+    {% render_entrypoint 'main' 'js' %}
   </body>
 </head>
 ```

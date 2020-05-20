@@ -92,7 +92,7 @@ def get_entrypoint_files_as_tags(entrypoint_name, extension=None, config='DEFAUL
     '''
     entrypoint_files = _get_entrypoint_files(entrypoint_name, extension, config)
     tags = []
-    for chunk in entrypoint_files:  
+    for chunk in entrypoint_files:
         if chunk['name'].endswith(('.js', '.js.gz')):
             tags.append((
                 '<script type="text/javascript" src="{0}" {1}></script>'

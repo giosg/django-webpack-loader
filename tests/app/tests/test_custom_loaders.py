@@ -38,7 +38,7 @@ class CustomLoadersTestCase(TestCase):
         }):
             self.reload_webpack()
             try:
-                loader = utils.get_loader(DEFAULT_CONFIG)
+                utils.get_loader(DEFAULT_CONFIG)
                 self.fail('The loader should fail to load with a bad LOADER_CLASS')
             except ImportError as e:
                 self.assertIn(

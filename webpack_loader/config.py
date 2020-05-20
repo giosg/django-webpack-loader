@@ -16,6 +16,8 @@ DEFAULT_CONFIG = {
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
         'LOADER_CLASS': 'webpack_loader.loader.WebpackLoader',
+        'EXCLUDE_RUNTIME': False,
+        'BASE_ENTRYPOINT': '',
     }
 }
 
@@ -27,7 +29,7 @@ user_config = dict(
 )
 
 for entry in user_config.values():
-    entry['ignores'] = [re.compile(I) for I in entry['IGNORE']]
+    entry['ignores'] = [re.compile(ig) for ig in entry['IGNORE']]
 
 
 def load_config(name):

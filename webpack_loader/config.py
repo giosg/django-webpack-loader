@@ -16,8 +16,6 @@ DEFAULT_CONFIG = {
         'TIMEOUT': None,
         'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
         'LOADER_CLASS': 'webpack_loader.loader.WebpackLoader',
-        'EXCLUDE_RUNTIME': False,
-        'BASE_ENTRYPOINT': '',
     }
 }
 

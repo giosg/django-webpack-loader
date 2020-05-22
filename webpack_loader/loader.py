@@ -144,13 +144,10 @@ class WebpackLoader(object):
         while assets['status'] == 'compiling' and not timed_out:
             time.sleep(self.config['POLL_INTERVAL'])
             if timeout and (time.time() - timeout > start):
-                timed_out = True
+                raise WebpackLoaderTimeoutError(
+                    "Timed Out. Bundle `{0}` took more than {1} seconds "
+                    "to compile.".format(entry_name, timeout)
+                )
             assets = self.get_assets()
-
-        if timed_out:
-            raise WebpackLoaderTimeoutError(
-                "Timed Out. Bundle `{0}` took more than {1} seconds "
-                "to compile.".format(entry_name, timeout)
-            )
 
         return assets

@@ -139,9 +139,8 @@ class WebpackLoader(object):
 
     def poll_while_compiling(self, assets, entry_name):
         timeout = self.config['TIMEOUT'] or 0
-        timed_out = False
         start = time.time()
-        while assets['status'] == 'compiling' and not timed_out:
+        while assets['status'] == 'compiling':
             time.sleep(self.config['POLL_INTERVAL'])
             if timeout and (time.time() - timeout > start):
                 raise WebpackLoaderTimeoutError(

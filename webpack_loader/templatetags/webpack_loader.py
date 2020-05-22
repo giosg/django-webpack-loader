@@ -1,5 +1,4 @@
 from django import template, VERSION
-from django.conf import settings
 from django.utils.safestring import mark_safe
 
 from .. import utils
@@ -12,10 +11,12 @@ def render_bundle(bundle_name, extension=None, config='DEFAULT', attrs=''):
     tags = utils.get_as_tags(bundle_name, extension=extension, config=config, attrs=attrs)
     return mark_safe('\n'.join(tags))
 
+
 @register.simple_tag
 def render_entrypoint(entrypoint_name, extension=None, config='DEFAULT', attrs=''):
     tags = utils.get_entrypoint_files_as_tags(entrypoint_name, extension=extension, config=config, attrs=attrs)
     return mark_safe('\n'.join(tags))
+
 
 @register.simple_tag
 def webpack_static(asset_name, config='DEFAULT'):
@@ -23,6 +24,8 @@ def webpack_static(asset_name, config='DEFAULT'):
 
 
 assignment_tag = register.simple_tag if VERSION >= (1, 9) else register.assignment_tag
+
+
 @assignment_tag
 def get_files(bundle_name, extension=None, config='DEFAULT'):
     """

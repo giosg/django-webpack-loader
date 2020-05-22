@@ -117,14 +117,12 @@ class LoaderTestCase(TestCase):
         result = view(request)
         self.assertIn('<link type="text/css" href="/static/bundles/main.css" rel="stylesheet" />', result.rendered_content)
         self.assertIn('<script type="text/javascript" src="/static/bundles/main.js" ></script>', result.rendered_content)
-        self.assertIn('<script type="text/javascript" src="/static/bundles/runtime.js" ></script>', result.rendered_content)
 
         view = TemplateView.as_view(template_name='another_entrypoint.html')
         request = self.factory.get('/')
         result = view(request)
         self.assertIn('<link type="text/css" href="/static/bundles/another_entrypoint.css" rel="stylesheet" />', result.rendered_content)
         self.assertIn('<script type="text/javascript" src="/static/bundles/another_entrypoint.js" ></script>', result.rendered_content)
-        self.assertIn('<script type="text/javascript" src="/static/bundles/runtime.js" ></script>', result.rendered_content)
 
     def test_exclude_runtime(self):
         self.compile_bundles('webpack.config.multipleEntrypoints.js')
@@ -142,7 +140,6 @@ class LoaderTestCase(TestCase):
         result = view(request)
         self.assertNotIn('<link type="text/css" href="/static/bundles/main.css" rel="stylesheet" />', result.rendered_content)
         self.assertIn('<script type="text/javascript" src="/static/bundles/main.js" ></script>', result.rendered_content)
-        self.assertIn('<script type="text/javascript" src="/static/bundles/runtime.js" ></script>', result.rendered_content)
 
     def test_jinja2(self):
         self.compile_bundles('webpack.config.simple.js')
@@ -268,7 +265,7 @@ class LoaderTestCase(TestCase):
             elapsed = time.time() - then
             t.join()
             t2.join()
-            self.assertTrue(elapsed > wait_for)
+            self.assertTrue(elapsed >= wait_for)
 
         with self.settings(DEBUG=False):
             self.compile_bundles('webpack.config.simple.js')

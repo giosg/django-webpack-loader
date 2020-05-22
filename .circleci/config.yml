@@ -18,14 +18,17 @@ workflows:
       - test-3.6-110
       - test-3.6-111
       - test-3.6-22
+      - test-3.6-300
 
       - test-3.7-18
       - test-3.7-19
       - test-3.7-110
       - test-3.7-111
       - test-3.7-22
+      - test-3.7-300
 
       - test-3.8-22
+      - test-3.8-300
 jobs:
   base: &test-template
     docker:
@@ -45,7 +48,7 @@ jobs:
           - v1-py
 
       - run:
-          name: JS deps 
+          name: JS deps
           command: cd tests && yarn
       - save_cache:
           paths:
@@ -55,7 +58,7 @@ jobs:
       - run:
           name: setup python
           command: |
-            python3 -m venv venv 
+            python3 -m venv venv
             source venv/bin/activate
             rm -f requirements.txt
             pip install -r tests/requirements/common.txt
@@ -151,6 +154,12 @@ jobs:
       - image: circleci/python:3.6-stretch-node
     environment:
       DJANGO_VERSION: "22"
+  test-3.6-300:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.6-stretch-node
+    environment:
+      DJANGO_VERSION: "300"
 
   test-3.7-18:
     <<: *test-template
@@ -182,6 +191,12 @@ jobs:
       - image: circleci/python:3.7-stretch-node
     environment:
       DJANGO_VERSION: "22"
+  test-3.7-300:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7-stretch-node
+    environment:
+      DJANGO_VERSION: "300"
 
   test-3.8-22:
     <<: *test-template
@@ -189,3 +204,9 @@ jobs:
       - image: circleci/python:3.8-buster-node
     environment:
       DJANGO_VERSION: "22"
+  test-3.8-300:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8-buster-node
+    environment:
+      DJANGO_VERSION: "300"
